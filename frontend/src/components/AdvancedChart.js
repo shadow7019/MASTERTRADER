@@ -144,11 +144,20 @@ const AdvancedChart = ({ symbol, data, indicators, onTimeframeChange, onChartTyp
     if (!chartRef.current || !data || data.length === 0) return;
 
     const chart = chartRef.current;
-    chart.removeAllSeries();
+    
+    // Clear existing series safely
+    try {
+      // Remove all series if the method exists
+      if (typeof chart.removeAllSeries === 'function') {
+        chart.removeAllSeries();
+      }
+    } catch (error) {
+      console.warn('Error removing series:', error);
+    }
 
     // Convert data to lightweight-charts format
     const chartData = data.map(d => ({
-      time: new Date(d.timestamp).getTime() / 1000,
+      time: Math.floor(new Date(d.timestamp).getTime() / 1000),
       open: d.open,
       high: d.high,
       low: d.low,
@@ -158,107 +167,113 @@ const AdvancedChart = ({ symbol, data, indicators, onTimeframeChange, onChartTyp
 
     // Add main series based on chart type
     let mainSeries;
-    if (selectedChartType === 'candlestick') {
-      mainSeries = chart.addCandlestickSeries({
-        upColor: '#22C55E',
-        downColor: '#EF4444',
-        borderDownColor: '#EF4444',
-        borderUpColor: '#22C55E',
-        wickDownColor: '#EF4444',
-        wickUpColor: '#22C55E',
-        priceFormat: {
-          type: 'price',
-          precision: 2,
-          minMove: 0.01,
-        },
-      });
-    } else if (selectedChartType === 'line') {
-      mainSeries = chart.addLineSeries({
-        color: '#3B82F6',
-        lineWidth: 2,
-        priceFormat: {
-          type: 'price',
-          precision: 2,
-          minMove: 0.01,
-        },
-      });
-      const lineData = chartData.map(d => ({ time: d.time, value: d.close }));
-      mainSeries.setData(lineData);
-    } else if (selectedChartType === 'area') {
-      mainSeries = chart.addAreaSeries({
-        topColor: 'rgba(59, 130, 246, 0.4)',
-        bottomColor: 'rgba(59, 130, 246, 0.1)',
-        lineColor: '#3B82F6',
-        lineWidth: 2,
-        priceFormat: {
-          type: 'price',
-          precision: 2,
-          minMove: 0.01,
-        },
-      });
-      const areaData = chartData.map(d => ({ time: d.time, value: d.close }));
-      mainSeries.setData(areaData);
-    }
-
-    if (selectedChartType === 'candlestick') {
-      mainSeries.setData(chartData);
-    }
-
-    // Add volume series
-    const volumeSeries = chart.addHistogramSeries({
-      color: '#6B7280',
-      priceFormat: {
-        type: 'volume',
-      },
-      priceScaleId: 'volume',
-    });
-
-    chart.priceScale('volume').applyOptions({
-      scaleMargins: {
-        top: 0.8,
-        bottom: 0,
-      },
-    });
-
-    const volumeData = chartData.map(d => ({
-      time: d.time,
-      value: d.volume,
-      color: d.close >= d.open ? '#22C55E' : '#EF4444'
-    }));
-    volumeSeries.setData(volumeData);
-
-    // Add indicators
-    if (indicators && activeIndicators.length > 0) {
-      activeIndicators.forEach(indicatorId => {
-        const indicator = technicalIndicators.find(i => i.id === indicatorId);
-        if (!indicator || !indicators[indicatorId]) return;
-
-        const indicatorSeries = chart.addLineSeries({
-          color: indicator.color,
-          lineWidth: 1,
+    try {
+      if (selectedChartType === 'candlestick') {
+        mainSeries = chart.addCandlestickSeries({
+          upColor: '#22C55E',
+          downColor: '#EF4444',
+          borderDownColor: '#EF4444',
+          borderUpColor: '#22C55E',
+          wickDownColor: '#EF4444',
+          wickUpColor: '#22C55E',
           priceFormat: {
             type: 'price',
             precision: 2,
             minMove: 0.01,
           },
         });
+        mainSeries.setData(chartData);
+      } else if (selectedChartType === 'line') {
+        mainSeries = chart.addLineSeries({
+          color: '#3B82F6',
+          lineWidth: 2,
+          priceFormat: {
+            type: 'price',
+            precision: 2,
+            minMove: 0.01,
+          },
+        });
+        const lineData = chartData.map(d => ({ time: d.time, value: d.close }));
+        mainSeries.setData(lineData);
+      } else if (selectedChartType === 'area') {
+        mainSeries = chart.addAreaSeries({
+          topColor: 'rgba(59, 130, 246, 0.4)',
+          bottomColor: 'rgba(59, 130, 246, 0.1)',
+          lineColor: '#3B82F6',
+          lineWidth: 2,
+          priceFormat: {
+            type: 'price',
+            precision: 2,
+            minMove: 0.01,
+          },
+        });
+        const areaData = chartData.map(d => ({ time: d.time, value: d.close }));
+        mainSeries.setData(areaData);
+      }
 
-        let indicatorData = [];
-        if (indicatorId.includes('sma') || indicatorId.includes('ema')) {
-          indicatorData = indicators[indicatorId].map((value, index) => ({
-            time: chartData[chartData.length - indicators[indicatorId].length + index]?.time,
-            value: value
-          })).filter(d => d.time && d.value);
-        }
-
-        if (indicatorData.length > 0) {
-          indicatorSeries.setData(indicatorData);
-        }
+      // Add volume series
+      const volumeSeries = chart.addHistogramSeries({
+        color: '#6B7280',
+        priceFormat: {
+          type: 'volume',
+        },
+        priceScaleId: 'volume',
       });
-    }
 
-    // Fit content
-    chart.timeScale().fitContent();
+      chart.priceScale('volume').applyOptions({
+        scaleMargins: {
+          top: 0.8,
+          bottom: 0,
+        },
+      });
+
+      const volumeData = chartData.map(d => ({
+        time: d.time,
+        value: d.volume,
+        color: d.close >= d.open ? '#22C55E' : '#EF4444'
+      }));
+      volumeSeries.setData(volumeData);
+
+      // Add indicators
+      if (indicators && activeIndicators.length > 0) {
+        activeIndicators.forEach(indicatorId => {
+          const indicator = technicalIndicators.find(i => i.id === indicatorId);
+          if (!indicator || !indicators[indicatorId]) return;
+
+          try {
+            const indicatorSeries = chart.addLineSeries({
+              color: indicator.color,
+              lineWidth: 1,
+              priceFormat: {
+                type: 'price',
+                precision: 2,
+                minMove: 0.01,
+              },
+            });
+
+            let indicatorData = [];
+            if (indicatorId.includes('sma') || indicatorId.includes('ema')) {
+              indicatorData = indicators[indicatorId].map((value, index) => ({
+                time: chartData[chartData.length - indicators[indicatorId].length + index]?.time,
+                value: value
+              })).filter(d => d.time && d.value);
+            }
+
+            if (indicatorData.length > 0) {
+              indicatorSeries.setData(indicatorData);
+            }
+          } catch (error) {
+            console.warn('Error adding indicator:', error);
+          }
+        });
+      }
+
+      // Fit content
+      chart.timeScale().fitContent();
+
+    } catch (error) {
+      console.error('Error updating chart:', error);
+    }
 
   }, [data, indicators, selectedChartType, activeIndicators]);
 
