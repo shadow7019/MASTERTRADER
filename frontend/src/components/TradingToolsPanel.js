@@ -4,7 +4,7 @@ import {
   Calculator, TrendingUp, TrendingDown, Target, 
   Zap, Activity, BarChart3, PieChart, Layers,
   DollarSign, Percent, Clock, AlertTriangle,
-  Settings, Save, Download, RefreshCw
+  Settings, Save, Download, RefreshCw, X
 } from 'lucide-react';
 
 const TradingToolsPanel = ({ symbol, currentPrice, onToolSelect }) => {
@@ -303,112 +303,6 @@ const TradingToolsPanel = ({ symbol, currentPrice, onToolSelect }) => {
               >
                 Show Pivots on Chart
               </button>
-            </motion.div>
-          )}
-
-          {activeToolTab === 'levels' && (
-            <motion.div
-              key="levels"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="p-4 space-y-4"
-            >
-              <h4 className="text-white font-medium">Support & Resistance</h4>
-              
-              <div className="space-y-3">
-                <div>
-                  <div className="text-red-400 text-sm font-medium mb-2">Resistance Levels</div>
-                  {resistanceLevels.map((level, index) => (
-                    <div key={index} className="flex justify-between items-center p-2 bg-gray-800 rounded">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-red-400">${level.level.toFixed(2)}</span>
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          level.strength === 'strong' ? 'bg-red-900 text-red-300' :
-                          level.strength === 'medium' ? 'bg-yellow-900 text-yellow-300' :
-                          'bg-gray-700 text-gray-300'
-                        }`}>
-                          {level.strength}
-                        </span>
-                      </div>
-                      <span className="text-gray-400 text-xs">{level.touches} touches</span>
-                    </div>
-                  ))}
-                </div>
-                
-                <div>
-                  <div className="text-green-400 text-sm font-medium mb-2">Support Levels</div>
-                  {supportLevels.map((level, index) => (
-                    <div key={index} className="flex justify-between items-center p-2 bg-gray-800 rounded">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-green-400">${level.level.toFixed(2)}</span>
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          level.strength === 'strong' ? 'bg-green-900 text-green-300' :
-                          level.strength === 'medium' ? 'bg-yellow-900 text-yellow-300' :
-                          'bg-gray-700 text-gray-300'
-                        }`}>
-                          {level.strength}
-                        </span>
-                      </div>
-                      <span className="text-gray-400 text-xs">{level.touches} touches</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <button
-                onClick={() => onToolSelect?.('levels')}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition-colors"
-              >
-                Draw Levels on Chart
-              </button>
-            </motion.div>
-          )}
-
-          {activeToolTab === 'portfolio' && (
-            <motion.div
-              key="portfolio"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="p-4 space-y-4"
-            >
-              <h4 className="text-white font-medium">Portfolio Risk Management</h4>
-              
-              <div className="space-y-3">
-                <div className="bg-gray-800 p-3 rounded">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-400">Portfolio Value</span>
-                    <span className="text-white font-medium">$50,000</span>
-                  </div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-400">Current Risk</span>
-                    <span className="text-yellow-400">2.5%</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Max Risk (2%)</span>
-                    <span className="text-red-400">$1,000</span>
-                  </div>
-                </div>
-                
-                <div className="bg-gray-800 p-3 rounded">
-                  <div className="text-white font-medium mb-2">Risk Distribution</div>
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">AAPL</span>
-                      <span className="text-white">0.8%</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">TSLA</span>
-                      <span className="text-white">1.2%</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">GOOGL</span>
-                      <span className="text-white">0.5%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </motion.div>
           )}
 
