@@ -30,8 +30,8 @@ function App() {
         setMarketData(data);
         
         // Calculate technical indicators
-        const indicators = marketDataService.calculateTechnicalIndicators(data);
-        setTechnicalIndicators(indicators);
+        const calculatedIndicators = marketDataService.calculateTechnicalIndicators(data);
+        setTechnicalIndicators(calculatedIndicators);
         
         // Subscribe to real-time data
         marketDataService.subscribe(selectedSymbol, (realTimeUpdate) => {
@@ -64,8 +64,8 @@ function App() {
       const data = await marketDataService.fetchHistoricalData(newSymbol, '1day', 100);
       setMarketData(data);
       
-      const indicators = marketDataService.calculateTechnicalIndicators(data);
-      setTechnicalIndicators(indicators);
+      const calculatedIndicators = marketDataService.calculateTechnicalIndicators(data);
+      setTechnicalIndicators(calculatedIndicators);
       
     } catch (error) {
       console.error('Error fetching symbol data:', error);
@@ -80,8 +80,8 @@ function App() {
       const data = await marketDataService.fetchHistoricalData(selectedSymbol, timeframe, 100);
       setMarketData(data);
       
-      const indicators = marketDataService.calculateTechnicalIndicators(data);
-      setTechnicalIndicators(indicators);
+      const calculatedIndicators = marketDataService.calculateTechnicalIndicators(data);
+      setTechnicalIndicators(calculatedIndicators);
     } catch (error) {
       console.error('Error changing timeframe:', error);
     } finally {
