@@ -158,19 +158,40 @@ export class MarketDataService {
     }
   }
 
-  // Generate mock historical data
+  // Generate mock historical data with Indian market support
   generateMockHistoricalData(symbol, limit) {
-    const basePrice = {
+    const basePrices = {
+      // US Stocks
       'AAPL': 175.43,
       'GOOGL': 142.56,
       'MSFT': 378.91,
       'TSLA': 248.73,
       'AMZN': 155.89,
+      'NVDA': 875.43,
+      
+      // Indian Stocks (NSE)
+      'RELIANCE.NS': 2456.78,
+      'TCS.NS': 3789.12,
+      'INFY.NS': 1567.89,
+      'HDFCBANK.NS': 1623.45,
+      'ICICIBANK.NS': 987.65,
+      'HINDUNILVR.NS': 2567.89,
+      'ITC.NS': 456.78,
+      'SBIN.NS': 567.89,
+      'BHARTIARTL.NS': 1234.56,
+      'ASIANPAINT.NS': 3123.45,
+      
+      // Crypto
       'BTC-USD': 67234.56,
-      'ETH-USD': 3456.78
+      'ETH-USD': 3456.78,
+      
+      // Indices
+      'SPY': 456.78,
+      'NIFTY50': 21567.89,
+      'SENSEX': 71234.56
     };
 
-    const startPrice = basePrice[symbol] || 100;
+    const startPrice = basePrices[symbol] || 100;
     const data = [];
 
     for (let i = 0; i < limit; i++) {
@@ -178,18 +199,18 @@ export class MarketDataService {
       const variation = Math.sin(i * 0.1) * 10 + (Math.random() - 0.5) * 5;
       const price = startPrice + variation;
       
-      const open = price + (Math.random() - 0.5) * 2;
-      const close = price + (Math.random() - 0.5) * 2;
-      const high = Math.max(open, close) + Math.random() * 3;
-      const low = Math.min(open, close) - Math.random() * 3;
-      const volume = Math.floor(Math.random() * 1000000) + 100000;
+      const open = price + (Math.random() - 0.5) * 4;
+      const close = price + (Math.random() - 0.5) * 4;
+      const high = Math.max(open, close) + Math.random() * 6;
+      const low = Math.min(open, close) - Math.random() * 6;
+      const volume = Math.floor(Math.random() * 10000000) + 100000;
 
       data.push({
         timestamp: timestamp.toISOString(),
-        open: parseFloat(open.toFixed(2)),
-        high: parseFloat(high.toFixed(2)),
-        low: parseFloat(low.toFixed(2)),
-        close: parseFloat(close.toFixed(2)),
+        open: parseFloat(Math.max(0.01, open).toFixed(2)),
+        high: parseFloat(Math.max(0.01, high).toFixed(2)),
+        low: parseFloat(Math.max(0.01, low).toFixed(2)),
+        close: parseFloat(Math.max(0.01, close).toFixed(2)),
         volume: volume
       });
     }
