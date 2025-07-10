@@ -101,7 +101,7 @@ const mockTradingIdeas = [
 ];
 
 // Header Component
-export const Header = ({ selectedSymbol, setSelectedSymbol }) => {
+export const Header = ({ selectedSymbol, setSelectedSymbol, realTimeData, currentView, setCurrentView }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -109,6 +109,28 @@ export const Header = ({ selectedSymbol, setSelectedSymbol }) => {
     stock.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
     stock.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Get real-time ticker data
+  const getTickerData = () => {
+    return mockMarketData.slice(0, 6).map(stock => {
+      const realtimeUpdate = realTimeData?.[stock.symbol];
+      if (realtimeUpdate) {
+        return {
+          ...stock,
+          price: realtimeUpdate.price,
+          change: realtimeUpdate.change,
+          changePercent: realtimeUpdate.changePercent
+        };
+      }
+      return stock;
+    });
+  };
+
+  const viewTabs = [
+    { id: 'trading', label: 'Trading', icon: TrendingUp },
+    { id: 'scanner', label: 'Scanner', icon: Search },
+    { id: 'screener', label: 'Screener', icon: BarChart3 }
+  ];
 
   return (
     <header className="bg-gray-900 border-b border-gray-700 h-16 flex items-center px-4">
@@ -173,23 +195,55 @@ export const Header = ({ selectedSymbol, setSelectedSymbol }) => {
             )}
           </AnimatePresence>
         </div>
+
+        {/* View Tabs */}
+        <div className="flex items-center space-x-2">
+          {viewTabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setCurrentView(tab.id)}
+                className={`flex items-center space-x-2 px-3 py-2 rounded text-sm transition-colors ${
+                  currentView === tab.id
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                }`}
+              >
+                <Icon size={16} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="flex-1 mx-8">
         <div className="flex items-center space-x-6 text-sm">
-          {mockMarketData.slice(0, 6).map((stock, index) => (
-            <div key={index} className="flex items-center space-x-2">
+          {getTickerData().map((stock, index) => (
+            <motion.div 
+              key={index} 
+              className="flex items-center space-x-2 ticker-item"
+              animate={{ 
+                backgroundColor: stock.change >= 0 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)' 
+              }}
+              transition={{ duration: 0.3 }}
+            >
               <span className="text-gray-400">{stock.symbol}</span>
-              <span className="text-white">{stock.price.toFixed(2)}</span>
-              <span className={`${stock.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              <span className="text-white font-medium">{stock.price.toFixed(2)}</span>
+              <span className={`font-medium ${stock.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 {stock.change >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
               </span>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
 
       <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 text-sm">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="text-green-400">Live Data</span>
+        </div>
         <button className="text-gray-400 hover:text-white transition-colors">
           <Bell size={20} />
         </button>
