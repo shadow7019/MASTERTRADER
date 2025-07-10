@@ -109,6 +109,20 @@ function App() {
     return 0;
   };
 
+  // Convert market data to chart format
+  const getChartData = () => {
+    return marketData.map((d, index) => ({
+      time: index,
+      price: d.close,
+      open: d.open,
+      high: d.high,
+      low: d.low,
+      close: d.close,
+      volume: d.volume,
+      sma: technicalIndicators.sma20?.[index - (marketData.length - (technicalIndicators.sma20?.length || 0))] || d.close
+    }));
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
