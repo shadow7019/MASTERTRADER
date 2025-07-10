@@ -572,7 +572,7 @@ export const Chart = ({ data, chartType, indicators }) => {
 };
 
 // Trading Panel Component
-export const TradingPanel = ({ selectedSymbol }) => {
+export const TradingPanel = ({ selectedSymbol, currentPrice, realTimeData }) => {
   const [orderType, setOrderType] = useState('market');
   const [side, setSide] = useState('buy');
   const [quantity, setQuantity] = useState('');
@@ -580,11 +580,49 @@ export const TradingPanel = ({ selectedSymbol }) => {
   const [stopLoss, setStopLoss] = useState('');
   const [takeProfit, setTakeProfit] = useState('');
 
-  const currentPrice = mockMarketData.find(s => s.symbol === selectedSymbol)?.price || 0;
+  // Get current market data
+  const getMarketData = () => {
+    if (realTimeData) {
+      return {
+        price: realTimeData.price,
+        change: realTimeData.change,
+        changePercent: realTimeData.changePercent,
+        volume: realTimeData.volume
+      };
+    }
+    
+    const fallback = mockMarketData.find(s => s.symbol === selectedSymbol);
+    return fallback || { price: currentPrice, change: 0, changePercent: 0, volume: 0 };
+  };
+
+  const marketData = getMarketData();
 
   return (
     <div className="bg-gray-900 border-l border-gray-700 w-80 p-4">
-      <h3 className="text-white font-semibold mb-4">Trade {selectedSymbol}</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-white font-semibold">Trade {selectedSymbol}</h3>
+        <div className="flex items-center space-x-2">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="text-green-400 text-xs">Live</span>
+        </div>
+      </div>
+
+      {/* Real-time Price Display */}
+      <div className="bg-gray-800 p-3 rounded mb-4">
+        <div className="flex items-center justify-between">
+          <span className="text-gray-400">Current Price</span>
+          <div className="text-right">
+            <div className="text-white text-lg font-bold">${marketData.price.toFixed(2)}</div>
+            <div className={`text-sm ${marketData.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              {marketData.change >= 0 ? '+' : ''}${marketData.change.toFixed(2)} ({marketData.changePercent.toFixed(2)}%)
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-between mt-2 text-sm">
+          <span className="text-gray-400">Volume</span>
+          <span className="text-white">{(marketData.volume / 1000000).toFixed(1)}M</span>
+        </div>
+      </div>
       
       <div className="space-y-4">
         <div className="flex space-x-2">
@@ -642,7 +680,7 @@ export const TradingPanel = ({ selectedSymbol }) => {
               type="number"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              placeholder={currentPrice.toFixed(2)}
+              placeholder={marketData.price.toFixed(2)}
               className="w-full bg-gray-800 text-white px-3 py-2 rounded border border-gray-700 focus:border-blue-500 focus:outline-none"
             />
           </div>
@@ -672,13 +710,21 @@ export const TradingPanel = ({ selectedSymbol }) => {
 
         <div className="pt-4 border-t border-gray-700">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-gray-400">Current Price</span>
-            <span className="text-white">${currentPrice.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between items-center mb-2">
             <span className="text-gray-400">Estimated Cost</span>
-            <span className="text-white">${(quantity * currentPrice).toFixed(2)}</span>
+            <span className="text-white">${(quantity * marketData.price).toFixed(2)}</span>
           </div>
+          {stopLoss && quantity && (
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-gray-400">Max Loss</span>
+              <span className="text-red-400">-${(quantity * Math.abs(marketData.price - parseFloat(stopLoss))).toFixed(2)}</span>
+            </div>
+          )}
+          {takeProfit && quantity && (
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-gray-400">Max Profit</span>
+              <span className="text-green-400">+${(quantity * Math.abs(parseFloat(takeProfit) - marketData.price)).toFixed(2)}</span>
+            </div>
+          )}
         </div>
 
         <button
