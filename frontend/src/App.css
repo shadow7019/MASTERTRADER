@@ -1,38 +1,136 @@
+/* MasterTraders Trading Platform Styles */
 .App {
-    text-align: center;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #0f0f10;
 }
 
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+::-webkit-scrollbar-thumb {
+  background: #4a4a4a;
+  border-radius: 4px;
 }
 
-.App-link {
-    color: #61dafb;
+::-webkit-scrollbar-thumb:hover {
+  background: #5a5a5a;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+/* Trading chart container */
+.recharts-wrapper {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Custom button styles */
+.trading-button {
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.trading-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Market data ticker animation */
+.ticker-item {
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Chart tooltip custom styling */
+.recharts-tooltip-wrapper {
+  z-index: 100;
+}
+
+/* Price change animations */
+.price-up {
+  animation: priceFlash 0.5s ease-in-out;
+  background-color: rgba(34, 197, 94, 0.1);
+}
+
+.price-down {
+  animation: priceFlash 0.5s ease-in-out;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+@keyframes priceFlash {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: currentColor;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* Loading animation */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .App {
+    font-size: 14px;
+  }
+  
+  .sidebar {
+    width: 200px;
+  }
+  
+  .trading-panel {
+    width: 280px;
+  }
+}
+
+/* Focus states for accessibility */
+button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Smooth transitions */
+* {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Professional trading platform feel */
+.trading-container {
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-feature-settings: 'tnum' on, 'lnum' on;
 }
