@@ -47,32 +47,48 @@ class MockWebSocket {
   }
 
   generateMockTick() {
-    const symbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'BTC-USD', 'ETH-USD'];
+    const symbols = [
+      'AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'NVDA',
+      'RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'ICICIBANK.NS',
+      'BTC-USD', 'ETH-USD', 'NIFTY50', 'SENSEX'
+    ];
     const symbol = symbols[Math.floor(Math.random() * symbols.length)];
     
-    // Generate realistic price movements
-    const basePrice = {
+    // Generate realistic price movements based on symbol
+    const basePrices = {
       'AAPL': 175.43,
       'GOOGL': 142.56,
       'MSFT': 378.91,
       'TSLA': 248.73,
       'AMZN': 155.89,
+      'NVDA': 875.43,
+      'RELIANCE.NS': 2456.78,
+      'TCS.NS': 3789.12,
+      'INFY.NS': 1567.89,
+      'HDFCBANK.NS': 1623.45,
+      'ICICIBANK.NS': 987.65,
       'BTC-USD': 67234.56,
-      'ETH-USD': 3456.78
+      'ETH-USD': 3456.78,
+      'NIFTY50': 21567.89,
+      'SENSEX': 71234.56
     };
 
-    const currentPrice = basePrice[symbol] || 100;
-    const change = (Math.random() - 0.5) * 2; // -1 to +1
-    const newPrice = currentPrice + change;
-    const volume = Math.floor(Math.random() * 1000000);
+    const currentPrice = basePrices[symbol] || 100;
+    const volatility = symbol.includes('BTC') || symbol.includes('ETH') ? 0.02 : 0.005;
+    const change = (Math.random() - 0.5) * 2 * volatility * currentPrice;
+    const newPrice = Math.max(0.01, currentPrice + change);
+    const volume = Math.floor(Math.random() * 10000000) + 100000;
 
     return {
       symbol,
-      price: newPrice,
-      change: change,
-      changePercent: (change / currentPrice) * 100,
+      price: parseFloat(newPrice.toFixed(2)),
+      change: parseFloat(change.toFixed(2)),
+      changePercent: parseFloat((change / currentPrice * 100).toFixed(2)),
       volume: volume,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      high: parseFloat((newPrice * (1 + Math.random() * 0.01)).toFixed(2)),
+      low: parseFloat((newPrice * (1 - Math.random() * 0.01)).toFixed(2)),
+      open: parseFloat((newPrice + (Math.random() - 0.5) * change).toFixed(2))
     };
   }
 }
