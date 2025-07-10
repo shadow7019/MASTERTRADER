@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Header, Sidebar, Chart, TradingPanel, BottomPanel } from './components';
-import AdvancedChart from './components/AdvancedChart';
 import TradingToolsPanel from './components/TradingToolsPanel';
 import { marketDataService } from './services/marketData';
 import { motion, AnimatePresence } from 'framer-motion';
