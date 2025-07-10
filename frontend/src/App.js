@@ -8,16 +8,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BarChart3, TrendingUp, Search, Settings } from 'lucide-react';
 
 function App() {
-  const [selectedSymbol, setSelectedSymbol] = useState('AAPL');
+  const [selectedSymbol, setSelectedSymbol] = useState('RELIANCE.NS');
   const [activeTab, setActiveTab] = useState('watchlist');
   const [activeBottomTab, setActiveBottomTab] = useState('positions');
-  const [chartType, setChartType] = useState('line');
+  const [chartType, setChartType] = useState('candlestick');
   const [indicators, setIndicators] = useState(['sma']);
   const [isLoading, setIsLoading] = useState(true);
   const [marketData, setMarketData] = useState([]);
   const [technicalIndicators, setTechnicalIndicators] = useState({});
   const [realTimeData, setRealTimeData] = useState({});
-  const [currentView, setCurrentView] = useState('trading'); // trading, scanner, screener
+  const [currentView, setCurrentView] = useState('trading');
   const [showAdvancedTools, setShowAdvancedTools] = useState(true);
 
   useEffect(() => {
@@ -34,12 +34,20 @@ function App() {
         const calculatedIndicators = marketDataService.calculateTechnicalIndicators(data);
         setTechnicalIndicators(calculatedIndicators);
         
-        // Subscribe to real-time data
-        marketDataService.subscribe(selectedSymbol, (realTimeUpdate) => {
-          setRealTimeData(prev => ({
-            ...prev,
-            [realTimeUpdate.symbol]: realTimeUpdate
-          }));
+        // Subscribe to real-time data for multiple symbols
+        const symbols = [
+          'AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'NVDA',
+          'RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'ICICIBANK.NS',
+          'BTC-USD', 'ETH-USD', 'NIFTY50', 'SENSEX'
+        ];
+        
+        symbols.forEach(symbol => {
+          marketDataService.subscribe(symbol, (realTimeUpdate) => {
+            setRealTimeData(prev => ({
+              ...prev,
+              [realTimeUpdate.symbol]: realTimeUpdate
+            }));
+          });
         });
         
       } catch (error) {
@@ -55,24 +63,29 @@ function App() {
       // Cleanup subscription
       marketDataService.disconnect();
     };
+  }, []);
+
+  useEffect(() => {
+    // Update data when symbol changes
+    const updateSymbolData = async () => {
+      if (selectedSymbol) {
+        try {
+          const data = await marketDataService.fetchHistoricalData(selectedSymbol, '1day', 100);
+          setMarketData(data);
+          
+          const calculatedIndicators = marketDataService.calculateTechnicalIndicators(data);
+          setTechnicalIndicators(calculatedIndicators);
+        } catch (error) {
+          console.error('Error updating symbol data:', error);
+        }
+      }
+    };
+
+    updateSymbolData();
   }, [selectedSymbol]);
 
   const handleSymbolChange = async (newSymbol) => {
     setSelectedSymbol(newSymbol);
-    setIsLoading(true);
-    
-    try {
-      const data = await marketDataService.fetchHistoricalData(newSymbol, '1day', 100);
-      setMarketData(data);
-      
-      const calculatedIndicators = marketDataService.calculateTechnicalIndicators(data);
-      setTechnicalIndicators(calculatedIndicators);
-      
-    } catch (error) {
-      console.error('Error fetching symbol data:', error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handleTimeframeChange = async (timeframe) => {
@@ -96,7 +109,6 @@ function App() {
 
   const handleToolSelect = (tool) => {
     console.log('Tool selected:', tool);
-    // Tool selection logic would be implemented here
   };
 
   const getCurrentPrice = () => {
@@ -108,20 +120,6 @@ function App() {
     }
     
     return 0;
-  };
-
-  // Convert market data to chart format
-  const getChartData = () => {
-    return marketData.map((d, index) => ({
-      time: index,
-      price: d.close,
-      open: d.open,
-      high: d.high,
-      low: d.low,
-      close: d.close,
-      volume: d.volume,
-      sma: technicalIndicators.sma20?.[index - (marketData.length - (technicalIndicators.sma20?.length || 0))] || d.close
-    }));
   };
 
   if (isLoading) {
@@ -137,8 +135,8 @@ function App() {
           <div className="mt-4 text-white text-xl font-bold">
             Master<span className="text-blue-400">Traders</span>
           </div>
-          <div className="mt-2 text-gray-400">Loading advanced market data...</div>
-          <div className="mt-1 text-gray-500 text-sm">Real-time data • Technical indicators • Trading tools</div>
+          <div className="mt-2 text-gray-400">Loading live market data...</div>
+          <div className="mt-1 text-gray-500 text-sm">US • Indian • Crypto Markets • Live Charts</div>
         </motion.div>
       </div>
     );
@@ -165,10 +163,11 @@ function App() {
           {currentView === 'trading' && (
             <div className="flex-1 flex">
               <div className="flex-1 flex flex-col">
-                <Chart 
-                  data={getChartData()} 
-                  chartType={chartType}
-                  indicators={indicators}
+                <LiveChart 
+                  symbol={selectedSymbol}
+                  data={marketData}
+                  onTimeframeChange={handleTimeframeChange}
+                  onChartTypeChange={setChartType}
                 />
               </div>
               
