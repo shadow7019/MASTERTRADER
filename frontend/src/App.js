@@ -164,13 +164,10 @@ function App() {
           {currentView === 'trading' && (
             <div className="flex-1 flex">
               <div className="flex-1 flex flex-col">
-                <AdvancedChart 
-                  symbol={selectedSymbol}
-                  data={marketData} 
-                  indicators={technicalIndicators}
-                  onTimeframeChange={handleTimeframeChange}
-                  onChartTypeChange={setChartType}
-                  onIndicatorToggle={handleIndicatorToggle}
+                <Chart 
+                  data={getChartData()} 
+                  chartType={chartType}
+                  indicators={indicators}
                 />
               </div>
               
