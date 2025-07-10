@@ -10,8 +10,8 @@ function App() {
   const [selectedSymbol, setSelectedSymbol] = useState('AAPL');
   const [activeTab, setActiveTab] = useState('watchlist');
   const [activeBottomTab, setActiveBottomTab] = useState('positions');
-  const [chartType, setChartType] = useState('candlestick');
-  const [indicators, setIndicators] = useState(['sma20']);
+  const [chartType, setChartType] = useState('line');
+  const [indicators, setIndicators] = useState(['sma']);
   const [isLoading, setIsLoading] = useState(true);
   const [marketData, setMarketData] = useState([]);
   const [technicalIndicators, setTechnicalIndicators] = useState({});
