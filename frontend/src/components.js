@@ -13,7 +13,7 @@ import {
   PieChart, Briefcase, TrendingUpIcon, MessageSquare, Share2
 } from 'lucide-react';
 
-// Mock data for charts and markets
+// Mock data for charts and markets - now including Indian stocks
 const mockChartData = Array.from({ length: 100 }, (_, i) => {
   const basePrice = 150;
   const variation = Math.sin(i * 0.1) * 10 + Math.random() * 5;
@@ -30,14 +30,34 @@ const mockChartData = Array.from({ length: 100 }, (_, i) => {
 });
 
 const mockMarketData = [
-  { symbol: 'AAPL', name: 'Apple Inc.', price: 175.43, change: 2.34, changePercent: 1.35, volume: '64.2M' },
-  { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 142.56, change: -1.23, changePercent: -0.85, volume: '28.9M' },
-  { symbol: 'MSFT', name: 'Microsoft Corp.', price: 378.91, change: 5.67, changePercent: 1.52, volume: '42.1M' },
-  { symbol: 'TSLA', name: 'Tesla Inc.', price: 248.73, change: -8.45, changePercent: -3.28, volume: '156.8M' },
-  { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 155.89, change: 0.78, changePercent: 0.50, volume: '35.7M' },
-  { symbol: 'BTC-USD', name: 'Bitcoin', price: 67234.56, change: 1234.78, changePercent: 1.87, volume: '2.1B' },
-  { symbol: 'ETH-USD', name: 'Ethereum', price: 3456.78, change: -123.45, changePercent: -3.45, volume: '1.8B' },
-  { symbol: 'SPY', name: 'SPDR S&P 500', price: 456.78, change: 2.34, changePercent: 0.52, volume: '78.9M' }
+  // US Stocks
+  { symbol: 'AAPL', name: 'Apple Inc.', price: 175.43, change: 2.34, changePercent: 1.35, volume: '64.2M', country: 'US' },
+  { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 142.56, change: -1.23, changePercent: -0.85, volume: '28.9M', country: 'US' },
+  { symbol: 'MSFT', name: 'Microsoft Corp.', price: 378.91, change: 5.67, changePercent: 1.52, volume: '42.1M', country: 'US' },
+  { symbol: 'TSLA', name: 'Tesla Inc.', price: 248.73, change: -8.45, changePercent: -3.28, volume: '156.8M', country: 'US' },
+  { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 155.89, change: 0.78, changePercent: 0.50, volume: '35.7M', country: 'US' },
+  { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 875.43, change: 45.67, changePercent: 5.51, volume: '45.2M', country: 'US' },
+  
+  // Indian Stocks (NSE)
+  { symbol: 'RELIANCE.NS', name: 'Reliance Industries Ltd.', price: 2456.78, change: 34.56, changePercent: 1.43, volume: '8.9M', country: 'IN' },
+  { symbol: 'TCS.NS', name: 'Tata Consultancy Services', price: 3789.12, change: -45.67, changePercent: -1.19, volume: '2.1M', country: 'IN' },
+  { symbol: 'INFY.NS', name: 'Infosys Limited', price: 1567.89, change: 23.45, changePercent: 1.52, volume: '4.5M', country: 'IN' },
+  { symbol: 'HDFCBANK.NS', name: 'HDFC Bank Limited', price: 1623.45, change: -12.34, changePercent: -0.75, volume: '6.7M', country: 'IN' },
+  { symbol: 'ICICIBANK.NS', name: 'ICICI Bank Limited', price: 987.65, change: 15.67, changePercent: 1.61, volume: '12.3M', country: 'IN' },
+  { symbol: 'HINDUNILVR.NS', name: 'Hindustan Unilever Ltd.', price: 2567.89, change: 8.90, changePercent: 0.35, volume: '1.8M', country: 'IN' },
+  { symbol: 'ITC.NS', name: 'ITC Limited', price: 456.78, change: -3.45, changePercent: -0.75, volume: '15.6M', country: 'IN' },
+  { symbol: 'SBIN.NS', name: 'State Bank of India', price: 567.89, change: 12.34, changePercent: 2.22, volume: '45.7M', country: 'IN' },
+  { symbol: 'BHARTIARTL.NS', name: 'Bharti Airtel Limited', price: 1234.56, change: 23.45, changePercent: 1.94, volume: '8.9M', country: 'IN' },
+  { symbol: 'ASIANPAINT.NS', name: 'Asian Paints Limited', price: 3123.45, change: -67.89, changePercent: -2.13, volume: '2.3M', country: 'IN' },
+  
+  // Crypto
+  { symbol: 'BTC-USD', name: 'Bitcoin', price: 67234.56, change: 1234.78, changePercent: 1.87, volume: '2.1B', country: 'CRYPTO' },
+  { symbol: 'ETH-USD', name: 'Ethereum', price: 3456.78, change: -123.45, changePercent: -3.45, volume: '1.8B', country: 'CRYPTO' },
+  
+  // Indices
+  { symbol: 'SPY', name: 'SPDR S&P 500', price: 456.78, change: 2.34, changePercent: 0.52, volume: '78.9M', country: 'US' },
+  { symbol: 'NIFTY50', name: 'Nifty 50', price: 21567.89, change: 134.56, changePercent: 0.63, volume: '892.3M', country: 'IN' },
+  { symbol: 'SENSEX', name: 'BSE Sensex', price: 71234.56, change: 456.78, changePercent: 0.65, volume: '1.2B', country: 'IN' }
 ];
 
 const mockNews = [
