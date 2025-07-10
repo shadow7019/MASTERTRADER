@@ -132,7 +132,16 @@ export const Header = ({ selectedSymbol, setSelectedSymbol, realTimeData, curren
 
   // Get real-time ticker data
   const getTickerData = () => {
-    return mockMarketData.slice(0, 6).map(stock => {
+    const defaultTicker = [
+      { symbol: 'AAPL', price: 175.43, change: 2.34, changePercent: 1.35 },
+      { symbol: 'RELIANCE.NS', price: 2456.78, change: 34.56, changePercent: 1.43 },
+      { symbol: 'TCS.NS', price: 3789.12, change: -45.67, changePercent: -1.19 },
+      { symbol: 'BTC-USD', price: 67234.56, change: 1234.78, changePercent: 1.87 },
+      { symbol: 'NIFTY50', price: 21567.89, change: 134.56, changePercent: 0.63 },
+      { symbol: 'SENSEX', price: 71234.56, change: 456.78, changePercent: 0.65 }
+    ];
+    
+    return defaultTicker.map(stock => {
       const realtimeUpdate = realTimeData?.[stock.symbol];
       if (realtimeUpdate) {
         return {
