@@ -259,7 +259,7 @@ export const Header = ({ selectedSymbol, setSelectedSymbol, realTimeData, curren
 };
 
 // Sidebar Component
-export const Sidebar = ({ activeTab, setActiveTab }) => {
+export const Sidebar = ({ activeTab, setActiveTab, onSymbolSelect }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const tabs = [
@@ -313,7 +313,11 @@ export const Sidebar = ({ activeTab, setActiveTab }) => {
           </div>
           <div className="space-y-2">
             {mockMarketData.slice(0, 8).map((stock, index) => (
-              <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-800 rounded cursor-pointer">
+              <button
+                key={index}
+                onClick={() => onSymbolSelect?.(stock.symbol)}
+                className="w-full flex items-center justify-between p-2 hover:bg-gray-800 rounded cursor-pointer"
+              >
                 <div>
                   <div className="text-white text-sm font-medium">{stock.symbol}</div>
                   <div className="text-gray-400 text-xs">{stock.name}</div>
@@ -324,7 +328,7 @@ export const Sidebar = ({ activeTab, setActiveTab }) => {
                     {stock.change >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
